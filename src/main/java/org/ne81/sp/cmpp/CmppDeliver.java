@@ -1,7 +1,9 @@
 package org.ne81.sp.cmpp;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class CmppDeliver extends CmppMessageHeader {
 
@@ -135,18 +137,47 @@ public class CmppDeliver extends CmppMessageHeader {
 		return true;
 	}
 
+	@Override
 	public String toString() {
-		if (registeredDelivery == 0) {
-			String msgContent = CmppUtil.getMessageContent(this.msgContent, msgFmt);
-			return id + "\t" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dt) + "\t"
-					+ msgId + "\t" + destId + "\t" + serviceId + "\t" + tp_pid + "\t" + tp_udhi
-					+ "\t" + msgFmt + "\t" + srcTerminalId + "\t" + srcTerminalType + "\t"
-					+ registeredDelivery + "\t" + (msgLength & 0xFF) + "\t"
-					+ msgContent.replaceAll("[\r\n\0\t\'\"]", "") + "\t" + linkId;
-		} else
-			return report.toString();
-
+		String msg = null;
+		try {
+			msg = new String(msgContent, "UTF-16");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "CmppDeliver{" +
+				"msgId=" + msgId +
+				", destId='" + destId + '\'' +
+				", serviceId='" + serviceId + '\'' +
+				", tp_pid=" + tp_pid +
+				", tp_udhi=" + tp_udhi +
+				", msgFmt=" + msgFmt +
+				", srcTerminalId='" + srcTerminalId + '\'' +
+				", srcTerminalType=" + srcTerminalType +
+				", registeredDelivery=" + registeredDelivery +
+				", msgLength=" + msgLength +
+				", msgContent=" + msg +
+				", linkId='" + linkId + '\'' +
+				", report=" + report +
+				", terminalIdLen=" + terminalIdLen +
+				", linkIdLen=" + linkIdLen +
+				", expMsgLen=" + expMsgLen +
+				'}';
 	}
+
+
+
+	//	public String toString() {
+//		if (registeredDelivery == 0) {
+//			String msgContent = CmppUtil.getMessageContent(this.msgContent, msgFmt);
+//			return id + "\t" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dt) + "\t"
+//					+ msgId + "\t" + destId + "\t" + serviceId + "\t" + tp_pid + "\t" + tp_udhi
+//					+ "\t" + msgFmt + "\t" + srcTerminalId + "\t" + srcTerminalType + "\t"
+//					+ registeredDelivery + "\t" + (msgLength & 0xFF) + "\t"
+//					+ msgContent.replaceAll("[\r\n\0\t\'\"]", "") + "\t" + linkId;
+//		} else
+//			return report.toString();
+//	}
 
 	public long getMsgId() {
 		return msgId;

@@ -88,7 +88,6 @@ public class CmppHandler implements IoHandler {
 
 			} else if (message instanceof CmppSubmit) {
 				CmppSubmit submit = (CmppSubmit) message;
-				logger.info(submit.toString());
 
 				CmppSubmitResp csr = new CmppSubmitResp(version);
 				csr.setSequenceId(((CmppSubmit) message).getSequenceId());
