@@ -18,7 +18,7 @@ import org.simplejavamail.mailer.config.TransportStrategy;
 
 public class CmppUtil {
 
-	static String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+	static String emailRegex = "[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 	static Pattern emailPattern = Pattern.compile(emailRegex);
 
 	static Mailer mailer = MailerBuilder
@@ -76,7 +76,6 @@ public class CmppUtil {
 	}
 
 	public static void main(String[] args) {
-
 	}
 
 	public static byte[] getLenBytes(String s, int len) {

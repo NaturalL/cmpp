@@ -139,12 +139,8 @@ public class CmppDeliver extends CmppMessageHeader {
 
 	@Override
 	public String toString() {
-		String msg = null;
-		try {
-			msg = new String(msgContent, "UTF-16");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		String msg = CmppUtil.getMessageContent(msgContent, msgFmt);
+
 		return "CmppDeliver{" +
 				"msgId=" + msgId +
 				", destId='" + destId + '\'' +

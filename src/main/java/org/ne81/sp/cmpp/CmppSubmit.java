@@ -66,12 +66,7 @@ public class CmppSubmit extends CmppMessageHeader implements java.lang.Cloneable
 
 	@Override
 	public String toString() {
-		String msg = null;
-		try {
-			msg = new String(msgContent, "UTF-16");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		String msg = CmppUtil.getMessageContent(msgContent, msgFmt);
 		return "CmppSubmit{" +
 				"msgId=" + msgId +
 				", pkTotal=" + pkTotal +
