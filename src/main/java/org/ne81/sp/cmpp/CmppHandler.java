@@ -101,14 +101,15 @@ public class CmppHandler implements IoHandler {
 
 					//状态报告
 					CmppDeliver deliver = new CmppDeliver(version, reportMsgId, "", "", "",
-							new String("状态报告").getBytes(), "linkId");
+							new String("状态报告").getBytes("UTF-16"), "linkId");
 					deliver.setRegisteredDelivery((byte) 1);
 					deliver.setReport(new CmppReport(reportMsgId, "DELIVRD", "", "",
 							mobile, i));
 					session.write(deliver);
 
 					//上行回复
-					CmppDeliver upSms = new CmppDeliver(version, reportMsgId, "10658167", "", mobile,
+					CmppDeliver upSms = new CmppDeliver(version, reportMsgId, "10658167" + submit.srcId,
+							"", mobile,
 							new String("收到了").getBytes("UTF-16"), "linkId");
 					deliver.setRegisteredDelivery((byte) 0);
 					session.write(upSms);
