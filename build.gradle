@@ -26,7 +26,7 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
 }
 
-task runTest(type: JavaExec) {
+task server(type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
 
     main = 'CmppTestServer'
