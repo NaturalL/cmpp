@@ -2,11 +2,14 @@ package org.ne81.sp.cmpp;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.deploy.util.StringUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.Mailer;
@@ -14,6 +17,9 @@ import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
 public class CmppUtil {
+
+	static String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+	static Pattern emailPattern = Pattern.compile(emailRegex);
 
 	static Mailer mailer = MailerBuilder
 			.withSMTPServer("", 0, "", "")
@@ -24,6 +30,16 @@ public class CmppUtil {
 			.buildMailer();
 
 	static ObjectMapper objectMapper = new ObjectMapper();
+
+
+	public static List<String> extractEmails(String s) {
+		List<String> emails = new ArrayList<String>();
+		Matcher m = emailPattern.matcher(s);
+		while (m.find()) {
+			emails.add(m.group());
+		}
+		return emails;
+	}
 
 	public static String toJson(Object o) {
 		String s = null;
@@ -49,10 +65,10 @@ public class CmppUtil {
 		return null;
 	}
 
-	public static void email(String title, String content, String addr) {
+	public static void email(String title, String content, List<String> addrs) {
 		Email email = EmailBuilder.startingBlank()
 				.from("", "")
-				.to("", addr)
+				.to("", addrs)
 				.withSubject("【cmpp测试通道】" + title)
 				.withPlainText(content)
 				.buildEmail();

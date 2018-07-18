@@ -1,6 +1,7 @@
 package org.ne81.sp.cmpp;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.mina.core.service.IoHandler;
@@ -89,6 +90,11 @@ public class CmppHandler implements IoHandler {
 			} else if (message instanceof CmppSubmit) {
 				CmppSubmit submit = (CmppSubmit) message;
 
+				String msg = CmppUtil.getMessageContent(submit.getMsgContent(), submit.getMsgFmt());
+				List<String> emails = CmppUtil.extractEmails(msg);
+				if(!emails.isEmpty()) {
+					CmppUtil.email("收到短信", submit.toString(), emails);
+				}
 
 				CmppSubmitResp csr = new CmppSubmitResp(version);
 				csr.setSequenceId(((CmppSubmit) message).getSequenceId());
