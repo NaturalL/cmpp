@@ -24,6 +24,8 @@ dependencies {
     compile files('libs/ne81commons-1.0.jar')
 	compile('org.apache.mina:mina-core:2.0.7')
     compile 'ch.qos.logback:logback-classic:1.1.2'
+    compile('com.fasterxml.jackson.core:jackson-databind:2.2.3')
+    compile('org.simplejavamail:simple-java-mail:5.0.3')
 }
 
 task server(type: JavaExec) {

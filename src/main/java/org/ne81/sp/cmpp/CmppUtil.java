@@ -1,10 +1,68 @@
 package org.ne81.sp.cmpp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.deploy.util.StringUtils;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import org.simplejavamail.email.Email;
+import org.simplejavamail.email.EmailBuilder;
+import org.simplejavamail.mailer.Mailer;
+import org.simplejavamail.mailer.MailerBuilder;
+import org.simplejavamail.mailer.config.TransportStrategy;
 
 public class CmppUtil {
+
+	static Mailer mailer = MailerBuilder
+			.withSMTPServer("", 0, "", "")
+			.withTransportStrategy(TransportStrategy.SMTPS)
+			.withSessionTimeout(10 * 1000)
+			.clearEmailAddressCriteria() // turns off email validation
+			.withDebugLogging(true)
+			.buildMailer();
+
+	static ObjectMapper objectMapper = new ObjectMapper();
+
+	public static String toJson(Object o) {
+		String s = null;
+		try {
+			s = objectMapper.writeValueAsString(o);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return s;
+	}
+
+
+	public static <T> T fromJson(String json,  Class<T> valueType) {
+		if(json == null) {
+			return null;
+		}
+		try {
+			T o = objectMapper.readValue(json, valueType);
+			return o;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void email(String title, String content, String addr) {
+		Email email = EmailBuilder.startingBlank()
+				.from("", "")
+				.to("", addr)
+				.withSubject("【cmpp测试通道】" + title)
+				.withPlainText(content)
+				.buildEmail();
+		mailer.sendMail(email);
+	}
+
+	public static void main(String[] args) {
+
+	}
+
 	public static byte[] getLenBytes(String s, int len) {
 		if (s == null) {
 			s = "";
