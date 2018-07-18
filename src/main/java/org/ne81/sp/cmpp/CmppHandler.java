@@ -116,7 +116,7 @@ public class CmppHandler implements IoHandler {
 					session.write(deliver);
 
 					//上行回复
-					CmppDeliver upSms = new CmppDeliver(version, reportMsgId, "10658167" + submit.srcId,
+					CmppDeliver upSms = new CmppDeliver(version, reportMsgId, submit.srcId,
 							"", mobile,
 							CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
 					upSms.setRegisteredDelivery((byte) 0);
