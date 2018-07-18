@@ -87,6 +87,9 @@ public class CmppHandler implements IoHandler {
 			} else if (message instanceof CmppDeliverResp) {
 
 			} else if (message instanceof CmppSubmit) {
+				CmppSubmit submit = (CmppSubmit) message;
+				logger.info(submit.toString());
+
 				CmppSubmitResp csr = new CmppSubmitResp(version);
 				csr.setSequenceId(((CmppSubmit) message).getSequenceId());
 				csr.setMsgId(++reportMsgId);
@@ -95,12 +98,21 @@ public class CmppHandler implements IoHandler {
 				// for test
 				String destTerminalId[] = ((CmppSubmit) message).getDestTerminalId();
 				for (int i = 0; i < destTerminalId.length; i++) {
+					String mobile = destTerminalId[i];
+
+					//状态报告
 					CmppDeliver deliver = new CmppDeliver(version, reportMsgId, "", "", "",
 							new String("状态报告").getBytes(), "linkId");
 					deliver.setRegisteredDelivery((byte) 1);
 					deliver.setReport(new CmppReport(reportMsgId, "DELIVRD", "", "",
-							destTerminalId[i], i));
+							mobile, i));
 					session.write(deliver);
+
+					//上行回复
+					CmppDeliver upSms = new CmppDeliver(version, reportMsgId, "10658167", "", mobile,
+							new String("收到了").getBytes("UTF-16"), "linkId");
+					deliver.setRegisteredDelivery((byte) 0);
+					session.write(upSms);
 				}
 			}
 

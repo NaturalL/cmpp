@@ -3,6 +3,7 @@ package org.ne81.sp.cmpp;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class CmppSubmit extends CmppMessageHeader implements java.lang.Cloneable {
 	/**
@@ -63,22 +64,63 @@ public class CmppSubmit extends CmppMessageHeader implements java.lang.Cloneable
 	private int linkIdLen;
 	private int submitExpMsgLen;
 
+	@Override
 	public String toString() {
-		String msgContent = CmppUtil.getMessageContent(this.msgContent, msgFmt);
-		String destTerminalId = "";
-		for (int i = 0; this.destTerminalId != null && i < this.destTerminalId.length; i++) {
-			destTerminalId += this.destTerminalId[i] + ",";
+		String msg = null;
+		try {
+			msg = new String(msgContent, "UTF-16");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
-
-		return id + "\t" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dt) + "\t" + msgId
-				+ "\t" + pkTotal + "\t" + pkNumber + "\t" + registeredDelivery + "\t" + msgLevel
-				+ "\t" + serviceId + "\t" + feeUserType + "\t" + feeTerminalId + "\t"
-				+ feeTerminalType + "\t" + tp_pid + "\t" + tp_udhi + "\t" + msgFmt + "\t" + msgSrc
-				+ "\t" + feeType + "\t" + feeCode + "\t" + vaildTime + "\t" + atTime + "\t" + srcId
-				+ "\t" + destUsrTl + "\t" + destTerminalId + "\t" + destTerminalType + "\t"
-				+ this.msgContent.length + "\t" + msgContent.replaceAll("[\r\n\0\t\'\"]", "")
-				+ "\t" + linkId + "\t" + result;
+		return "CmppSubmit{" +
+				"msgId=" + msgId +
+				", pkTotal=" + pkTotal +
+				", pkNumber=" + pkNumber +
+				", registeredDelivery=" + registeredDelivery +
+				", msgLevel=" + msgLevel +
+				", serviceId='" + serviceId + '\'' +
+				", feeUserType=" + feeUserType +
+				", feeTerminalId='" + feeTerminalId + '\'' +
+				", feeTerminalType=" + feeTerminalType +
+				", tp_pid=" + tp_pid +
+				", tp_udhi=" + tp_udhi +
+				", msgFmt=" + msgFmt +
+				", msgSrc='" + msgSrc + '\'' +
+				", feeType='" + feeType + '\'' +
+				", feeCode='" + feeCode + '\'' +
+				", vaildTime='" + vaildTime + '\'' +
+				", atTime='" + atTime + '\'' +
+				", srcId='" + srcId + '\'' +
+				", destUsrTl=" + destUsrTl +
+				", destTerminalId=" + Arrays.toString(destTerminalId) +
+				", destTerminalType=" + destTerminalType +
+				", msgLength=" + msgLength +
+				", msgContent=" + msg +
+				", linkId='" + linkId + '\'' +
+				", result=" + result +
+				", terminalIdLen=" + terminalIdLen +
+				", linkIdLen=" + linkIdLen +
+				", submitExpMsgLen=" + submitExpMsgLen +
+				'}';
 	}
+
+//	public String toString() {
+//		String msgContent = CmppUtil.getMessageContent(this.msgContent, msgFmt);
+//		String destTerminalId = "";
+//		for (int i = 0; this.destTerminalId != null && i < this.destTerminalId.length; i++) {
+//			destTerminalId += this.destTerminalId[i] + ",";
+//		}
+//
+//		return id + "\t" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dt) + "\t" + msgId
+//				+ "\t" + pkTotal + "\t" + pkNumber + "\t" + registeredDelivery + "\t" + msgLevel
+//				+ "\t" + serviceId + "\t" + feeUserType + "\t" + feeTerminalId + "\t"
+//				+ feeTerminalType + "\t" + tp_pid + "\t" + tp_udhi + "\t" + msgFmt + "\t" + msgSrc
+//				+ "\t" + feeType + "\t" + feeCode + "\t" + vaildTime + "\t" + atTime + "\t" + srcId
+//				+ "\t" + destUsrTl + "\t" + destTerminalId + "\t" + destTerminalType + "\t"
+//				+ this.msgContent.length + "\t" + msgContent.replaceAll("[\r\n\0\t\'\"]", "")
+//				+ "\t" + linkId + "\t" + result;
+
+//	}
 
 	public CmppSubmit(byte version) {
 		super(Constants.CMPP_SUBMIT, version);
