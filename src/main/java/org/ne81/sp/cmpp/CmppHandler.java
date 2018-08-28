@@ -111,7 +111,7 @@ public class CmppHandler implements IoHandler {
 					CmppDeliver deliver = new CmppDeliver(version, reportMsgId, submit.srcId, "", mobile,
 							CmppUtil.getMessageContentBytes("状态报告", (byte) 15), "linkId");
 					deliver.setRegisteredDelivery((byte) 1);
-					deliver.setReport(new CmppReport(reportMsgId, "DELIVRD", "", "",
+					deliver.setReport(new CmppReport(reportMsgId, "UNDELIVRD", "", "",
 							mobile, i));
 					session.write(deliver);
 
