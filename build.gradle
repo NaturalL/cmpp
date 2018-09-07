@@ -36,3 +36,10 @@ task server(type: JavaExec) {
     // arguments to pass to the application
     //args 'appArg1'
 }
+
+task client(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+
+    main = 'CmppTestClient'
+
+}
