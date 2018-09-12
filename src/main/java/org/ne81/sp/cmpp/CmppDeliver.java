@@ -2,7 +2,7 @@ package org.ne81.sp.cmpp;
 
 import java.nio.ByteBuffer;
 
-public class CmppDeliver extends CmppMessageHeader {
+public class CmppDeliver extends CmppMessageHeader implements java.lang.Cloneable{
 
 	/**
 	 * 
