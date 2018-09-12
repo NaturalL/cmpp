@@ -1,5 +1,7 @@
 package org.ne81.sp.cmpp;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
@@ -120,7 +122,14 @@ public class CmppHandler implements IoHandler {
 							"", mobile,
 							CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
 					upSms.setRegisteredDelivery((byte) 0);
-					session.write(upSms);
+
+					CmppDeliver[] concatenatedUpSms = CmppUtil.getConcatenatedUpSms(upSms,
+							"收到了,In the cellular phone industry, mobile phones and their networks sometimes support concatenated short message service (or concatenated SMS) to overcome the limitation on the number of characters that can be sent in a single SMS text message transmission (which is usually 160). Using this method, long messages are split into smaller messages by the sending device and recombined at the receiving end. Each message is then billed separately. When the feature "
+									+ "works properly, it is nearly transparent to the user, appearing as a single long text message. Previously, due to incompatibilities between providers and lack of support in some phone models,"
+									+ " there was not widespread use of this feature");
+					for (CmppDeliver up : concatenatedUpSms) {
+						session.write(up);
+					}
 				}
 			}
 

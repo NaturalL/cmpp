@@ -1,9 +1,6 @@
 package org.ne81.sp.cmpp;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 public class CmppDeliver extends CmppMessageHeader {
 
@@ -280,6 +277,12 @@ public class CmppDeliver extends CmppMessageHeader {
 
 	public void setLinkId(String linkId) {
 		this.linkId = linkId;
+	}
+
+	public CmppDeliver clone() throws CloneNotSupportedException {
+		CmppDeliver o = null;
+		o = (CmppDeliver) super.clone();
+		return o;
 	}
 
 }

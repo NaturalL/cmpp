@@ -16,6 +16,7 @@ import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
+@SuppressWarnings("ALL")
 public class CmppUtil {
 
 	static String emailRegex = "[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
@@ -245,6 +246,67 @@ public class CmppUtil {
 			submits[i].setMsgContent(ed.array());
 		}
 		return submits;
+	}
+
+	public static CmppDeliver[] getConcatenatedUpSms(CmppDeliver deliver, String shortMessage) {
+		if (shortMessage.length() <= 70) {
+			try {
+				if (deliver.getMsgFmt() == (byte) 8)
+					deliver.setMsgContent(shortMessage.getBytes("UnicodeBigUnmarked"));
+				else
+					deliver.setMsgContent(shortMessage.getBytes("gbk"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();// 应该不会报错
+			}
+			return new CmppDeliver[] { deliver };
+		}
+
+		String splittedMsg[] = splitString(shortMessage, 67);
+		int totalSegments = splittedMsg.length;
+
+		deliver.setTp_udhi((byte) 0x01);
+		// iteerating on splittedMsg array. Only Sequence Number and short
+		// message text will change each time
+		CmppDeliver delivers[] = new CmppDeliver[totalSegments];
+		for (int i = 0; i < totalSegments; i++) {
+			byte[] msg = null;
+			try {
+				if (deliver.getMsgFmt() == (byte) 8)
+					msg = splittedMsg[i].getBytes("UnicodeBigUnmarked");
+				else
+					msg = splittedMsg[i].getBytes("gbk");
+			} catch (UnsupportedEncodingException e1) {
+				// 不会出问题
+				e1.printStackTrace();
+			}
+
+			ByteBuffer ed = ByteBuffer.allocate(6 + msg.length);
+
+			ed.put((byte) 5); // UDH Length
+
+			ed.put((byte) 0); // IE Identifier
+
+			ed.put((byte) 3); // IE Data Length
+
+			ed.put((byte) 0); // Reference Number
+			ed.put((byte) totalSegments); // Number of pieces
+
+			ed.put((byte) (i + 1)); // Sequence number
+
+			// This encoding comes in Logica Open SMPP. Refer to its docs for
+			// more detail
+			ed.put(msg);
+			try {
+				delivers[i] = deliver.clone();
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (i > 0)
+				delivers[i].setSequenceId(Sequence.getInstance().getSequence());
+			delivers[i].setMsgContent(ed.array());
+		}
+		return delivers;
 	}
 
 	/**
