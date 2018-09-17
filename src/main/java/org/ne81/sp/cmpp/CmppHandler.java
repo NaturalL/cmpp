@@ -124,7 +124,7 @@ public class CmppHandler implements IoHandler {
 					upSms.setRegisteredDelivery((byte) 0);
 
 					CmppDeliver[] concatenatedUpSms = CmppUtil.getConcatenatedUpSms(upSms,
-							"收到了,In the cellular phone industry, mobile phones and their networks sometimes support concatenated short message service (or concatenated SMS) to overcome.");
+							CmppUtil.getMessageContent(submit.getMsgContent(), submit.getMsgFmt()));
 					for (CmppDeliver up : concatenatedUpSms) {
 						session.write(up);
 					}
