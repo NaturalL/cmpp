@@ -122,7 +122,8 @@ public class CmppHandler implements IoHandler {
 							"", mobile,
 							CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
 					upSms.setRegisteredDelivery((byte) 0);
-					session.write(upSms);
+
+					session.write(upSms.clone());
 
 					CmppDeliver[] concatenatedUpSms = CmppUtil.getConcatenatedUpSms(upSms,
 							"在今天之前，我们对父母大呼小叫、指手画脚，而今我们终于体会“树欲静而风不止，子欲养而亲不待”是一种什么滋味；在今天之前，我们真的傻的可以、幼稚天真，我们以为我们会为爱情死，会爱的死去活来，一步步走来，直到今天，我们渐渐懂得其实爱情死不了人");
