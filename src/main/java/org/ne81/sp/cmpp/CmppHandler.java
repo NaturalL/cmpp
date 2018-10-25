@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -23,7 +25,7 @@ public class CmppHandler implements IoHandler {
 	private boolean noResp = false;
 	private Hashtable<Integer, CmppSubmit> submitTable;
 	private CmppListener listener;
-	private long reportMsgId;
+	private AtomicLong reportMsgId;
 	private byte version = 32;
 
 	final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
@@ -87,7 +89,7 @@ public class CmppHandler implements IoHandler {
 
 				// for test
 				// for (int i = 0; i < 100; i++) {
-				 CmppDeliver deliver = new CmppDeliver(version, ++reportMsgId,
+				 CmppDeliver deliver = new CmppDeliver(version, reportMsgId.incrementAndGet(),
 				 "10658167303",
 				 "serviceid", "13651398480", "a".getBytes(),
 				 "linkId");
@@ -111,10 +113,11 @@ public class CmppHandler implements IoHandler {
 				if(msg.contains("上行")) {
 					up = true;
 				}
+				final long reportId = reportMsgId.incrementAndGet();
 
 				CmppSubmitResp csr = new CmppSubmitResp(version);
 				csr.setSequenceId(((CmppSubmit) message).getSequenceId());
-				csr.setMsgId(++reportMsgId);
+				csr.setMsgId(reportId);
 				csr.setResult(0);
 				session.write(csr);
 				// for test
@@ -128,24 +131,24 @@ public class CmppHandler implements IoHandler {
 							String mobile = destTerminalId[i];
 
 							//状态报告
-							CmppDeliver deliver = new CmppDeliver(version, reportMsgId,
+							CmppDeliver deliver = new CmppDeliver(version, reportId,
 									submit.srcId, "", mobile,
 									CmppUtil.getMessageContentBytes("状态报告", (byte) 15), "linkId");
 							deliver.setRegisteredDelivery((byte) 1);
-							deliver.setReport(new CmppReport(reportMsgId,
+							deliver.setReport(new CmppReport(reportId,
 									finalSuccessReport ? "DELIVRD" : "UNDELIVRD", "", "",
 									mobile, i));
 							session.write(deliver);
 						}
 					}
-				}, 2, TimeUnit.SECONDS);
+				}, 1, TimeUnit.SECONDS);
 
 				for (int i = 0; i < destTerminalId.length; i++) {
 					String mobile = destTerminalId[i];
 
 					if(up) {
 						//上行回复
-						CmppDeliver upSms = new CmppDeliver(version, reportMsgId, submit.srcId,
+						CmppDeliver upSms = new CmppDeliver(version, reportId, submit.srcId,
 								"", mobile,
 								CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
 						upSms.setRegisteredDelivery((byte) 0);
