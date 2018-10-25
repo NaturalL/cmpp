@@ -25,7 +25,7 @@ public class CmppHandler implements IoHandler {
 	private boolean noResp = false;
 	private Hashtable<Integer, CmppSubmit> submitTable;
 	private CmppListener listener;
-	private AtomicLong reportMsgId;
+	private AtomicLong reportMsgId = new AtomicLong(0);
 	private byte version = 32;
 
 	final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
