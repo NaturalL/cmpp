@@ -138,7 +138,7 @@ public class CmppHandler implements IoHandler {
 							session.write(deliver);
 						}
 					}
-				}, 500, TimeUnit.MILLISECONDS);
+				}, 2, TimeUnit.SECONDS);
 
 				for (int i = 0; i < destTerminalId.length; i++) {
 					String mobile = destTerminalId[i];
