@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -25,6 +26,8 @@ public class CmppHandler implements IoHandler {
 	private long reportMsgId;
 	private byte version = 32;
 
+	final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+
 
 	public CmppHandler(boolean client) {
 		this.client = client;
@@ -38,7 +41,7 @@ public class CmppHandler implements IoHandler {
 	}
 
 	@Override
-	public void messageReceived(IoSession session, Object message) throws Exception {
+	public void messageReceived(final IoSession session, Object message) throws Exception {
 		if (client) {
 			if (message instanceof CmppConnectResp) {
 				if (((CmppConnectResp) message).getStatus() == 0) {
@@ -93,7 +96,7 @@ public class CmppHandler implements IoHandler {
 			} else if (message instanceof CmppDeliverResp) {
 
 			} else if (message instanceof CmppSubmit) {
-				CmppSubmit submit = (CmppSubmit) message;
+				final CmppSubmit submit = (CmppSubmit) message;
 				boolean successReport = true, up = false;
 
 				String msg = CmppUtil.getMessageContent(submit.getMsgContent(), submit.getMsgFmt());
@@ -115,21 +118,30 @@ public class CmppHandler implements IoHandler {
 				csr.setResult(0);
 				session.write(csr);
 				// for test
-				String destTerminalId[] = ((CmppSubmit) message).getDestTerminalId();
+				final String destTerminalId[] = ((CmppSubmit) message).getDestTerminalId();
 
-				//延迟100ms发送状态报告
-				CmppUtil.sleep(100);
+				final boolean finalSuccessReport = successReport;
+				executorService.schedule(new Runnable() {
+					@Override
+					public void run() {
+						for (int i = 0; i < destTerminalId.length; i++) {
+							String mobile = destTerminalId[i];
+
+							//状态报告
+							CmppDeliver deliver = new CmppDeliver(version, reportMsgId,
+									submit.srcId, "", mobile,
+									CmppUtil.getMessageContentBytes("状态报告", (byte) 15), "linkId");
+							deliver.setRegisteredDelivery((byte) 1);
+							deliver.setReport(new CmppReport(reportMsgId,
+									finalSuccessReport ? "DELIVRD" : "UNDELIVRD", "", "",
+									mobile, i));
+							session.write(deliver);
+						}
+					}
+				}, 50, TimeUnit.MILLISECONDS);
+
 				for (int i = 0; i < destTerminalId.length; i++) {
 					String mobile = destTerminalId[i];
-
-					//状态报告
-					CmppDeliver deliver = new CmppDeliver(version, reportMsgId, submit.srcId, "", mobile,
-							CmppUtil.getMessageContentBytes("状态报告", (byte) 15), "linkId");
-					deliver.setRegisteredDelivery((byte) 1);
-					deliver.setReport(new CmppReport(reportMsgId, successReport? "DELIVRD" : "UNDELIVRD", "", "",
-							mobile, i));
-					session.write(deliver);
-
 
 					if(up) {
 						//上行回复
