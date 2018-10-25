@@ -94,12 +94,19 @@ public class CmppHandler implements IoHandler {
 
 			} else if (message instanceof CmppSubmit) {
 				CmppSubmit submit = (CmppSubmit) message;
+				boolean successReport = true, up = false;
 
 				String msg = CmppUtil.getMessageContent(submit.getMsgContent(), submit.getMsgFmt());
 				List<String> emails = CmppUtil.extractEmails(msg);
 				if(!emails.isEmpty()) {
 					logger.info(emails.get(0));
 					CmppUtil.email("收到短信", submit.toString(), emails);
+				}
+				if(msg.contains("失败")) {
+					 successReport = false;
+				}
+				if(msg.contains("上行")) {
+					up = true;
 				}
 
 				CmppSubmitResp csr = new CmppSubmitResp(version);
@@ -119,17 +126,21 @@ public class CmppHandler implements IoHandler {
 					CmppDeliver deliver = new CmppDeliver(version, reportMsgId, submit.srcId, "", mobile,
 							CmppUtil.getMessageContentBytes("状态报告", (byte) 15), "linkId");
 					deliver.setRegisteredDelivery((byte) 1);
-					deliver.setReport(new CmppReport(reportMsgId, "DELIVRD", "", "",
+					deliver.setReport(new CmppReport(reportMsgId, successReport? "DELIVRD" : "UNDELIVRD", "", "",
 							mobile, i));
 					session.write(deliver);
 
-					//上行回复
-					CmppDeliver upSms = new CmppDeliver(version, reportMsgId, submit.srcId,
-							"", mobile,
-							CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
-					upSms.setRegisteredDelivery((byte) 0);
 
-					session.write(upSms.clone());
+					if(up) {
+						//上行回复
+						CmppDeliver upSms = new CmppDeliver(version, reportMsgId, submit.srcId,
+								"", mobile,
+								CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
+						upSms.setRegisteredDelivery((byte) 0);
+
+						session.write(upSms.clone());
+					}
+
 
 //					CmppDeliver[] concatenatedUpSms = CmppUtil.getConcatenatedUpSms(upSms,
 //							"在今天之前，我们对父母大呼小叫、指手画脚，而今我们终于体会“树欲静而风不止，子欲养而亲不待”是一种什么滋味；在今天之前，我们真的傻的可以、幼稚天真，我们以为我们会为爱情死，会爱的死去活来，一步步走来，直到今天，我们渐渐懂得其实爱情死不了人");
