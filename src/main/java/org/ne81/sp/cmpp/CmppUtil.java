@@ -109,9 +109,15 @@ public class CmppUtil {
 	}
 
 	public static String getStringFromBuffer(java.nio.ByteBuffer buf, int len) {
-		byte[] bytes = new byte[len];
-		buf.get(bytes);
-		return esc0(new String(bytes));
+		try {
+			byte[] bytes = new byte[len];
+			buf.get(bytes);
+			return esc0(new String(bytes));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "[getStringFromBuffer error]";
+		}
+
 	}
 
 	public static String esc0(String s) {
