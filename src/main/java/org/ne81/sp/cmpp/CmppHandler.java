@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -22,6 +24,7 @@ public class CmppHandler implements IoHandler {
 	private CmppListener listener;
 	private long reportMsgId;
 	private byte version = 32;
+
 
 	public CmppHandler(boolean client) {
 		this.client = client;
@@ -106,6 +109,9 @@ public class CmppHandler implements IoHandler {
 				session.write(csr);
 				// for test
 				String destTerminalId[] = ((CmppSubmit) message).getDestTerminalId();
+
+				//延迟100ms发送状态报告
+				CmppUtil.sleep(100);
 				for (int i = 0; i < destTerminalId.length; i++) {
 					String mobile = destTerminalId[i];
 
