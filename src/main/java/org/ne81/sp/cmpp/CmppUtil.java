@@ -67,13 +67,18 @@ public class CmppUtil {
 	}
 
 	public static void email(String title, String content, List<String> addrs) {
-		Email email = EmailBuilder.startingBlank()
-				.from("", "")
-				.to("", addrs)
-				.withSubject("【cmpp测试通道】" + title)
-				.withPlainText(content)
-				.buildEmail();
-		mailer.sendMail(email);
+		try {
+			Email email = EmailBuilder.startingBlank()
+					.from("", "")
+					.to("", addrs)
+					.withSubject("【cmpp测试通道】" + title)
+					.withPlainText(content)
+					.buildEmail();
+			mailer.sendMail(email);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public static void main(String[] args) {
@@ -153,12 +158,19 @@ public class CmppUtil {
 	}
 
 	public static String getMessageContent(byte[] msgContentBytes, byte msgFmt) {
+		return getMessageContent(msgContentBytes, msgFmt, (byte)1);
+	}
+
+	public static String getMessageContent(byte[] msgContentBytes, byte msgFmt, byte tp_udhi) {
 		if (msgContentBytes == null)
 			return "";
 		String msgContent = "";
 		int offset = 0;
-		if (msgContentBytes.length > 1 && msgContentBytes[0] == 0x06) {
+		if (tp_udhi == (byte)1 && msgContentBytes.length > 1 && msgContentBytes[0] == 0x06) {
 			offset = 7;
+		}
+		if (tp_udhi == (byte)1 && msgContentBytes.length > 1 && msgContentBytes[0] == 0x05) {
+			offset = 6;
 		}
 		if (msgFmt == (byte) 8) {
 			try {

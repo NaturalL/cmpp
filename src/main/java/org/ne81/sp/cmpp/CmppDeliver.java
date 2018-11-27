@@ -136,7 +136,7 @@ public class CmppDeliver extends CmppMessageHeader implements java.lang.Cloneabl
 
 	@Override
 	public String toString() {
-		String msg = CmppUtil.getMessageContent(msgContent, msgFmt);
+		String msg = CmppUtil.getMessageContent(msgContent, msgFmt, tp_udhi);
 
 		return "CmppDeliver{" +
 				"msgId=" + msgId +
