@@ -26,6 +26,8 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
     compile('com.fasterxml.jackson.core:jackson-databind:2.2.3')
     compile('org.simplejavamail:simple-java-mail:5.0.3')
+    compile('commons-codec:commons-codec:1.10')
+
 }
 
 task server(type: JavaExec) {
