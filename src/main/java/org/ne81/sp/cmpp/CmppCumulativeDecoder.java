@@ -23,67 +23,6 @@ public class CmppCumulativeDecoder extends CumulativeProtocolDecoder {
 		this.version = (byte) 32;
 	}
 
-	// @Override
-	// public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput
-	// out) throws Exception {
-	// if (!ready)
-	// if (in.remaining() < headerBuf.remaining()) {
-	// byte bytes[] = new byte[in.remaining()];
-	// in.get(bytes);
-	// headerBuf.put(bytes);
-	// } else if (in.remaining() >= headerBuf.remaining()) {
-	// byte bytes[] = new byte[headerBuf.remaining()];
-	// in.get(bytes);
-	// headerBuf.put(bytes);
-	// headerBuf.flip();
-	// ready = true;
-	// }
-	// if (ready)
-	// if (buf == null) {
-	// int totalLength = headerBuf.getInt();
-	// int commandId = headerBuf.getInt();
-	// if (totalLength <= 3511 && totalLength >= Constants.MESSAGE_HEADER_LEN
-	// && isRightCommandId(commandId)) {
-	// buf = ByteBuffer.allocate(totalLength);
-	// buf.putInt(totalLength);
-	// buf.putInt(commandId);
-	// } else {
-	// String hexdump = String.format("%040x", new
-	// BigInteger(headerBuf.array()))
-	// + String.format("%040x", new BigInteger(in.array()));
-	// headerBuf.clear();
-	// ready = false;
-	// session.close(true);
-	// throw new Exception("包头错误：" + hexdump);
-	// }
-	// } else if (in.remaining() >= buf.remaining()) {
-	// byte bytes[] = new byte[buf.remaining()];
-	// in.get(bytes);
-	// buf.put(bytes);
-	// buf.flip();
-	// CmppMessageHeader message = decode(buf);
-	// if (message != null) {
-	// out.write(message);
-	// } else {
-	// String hexdump = String.format("%040x", new BigInteger(buf.array()))
-	// + String.format("%040x", new BigInteger(in.array()));
-	// buf.clear();
-	// buf = null;
-	// headerBuf.clear();
-	// ready = false;
-	// session.close(true);
-	// throw new Exception("数据包错误：" + hexdump);
-	// }
-	// buf.clear();
-	// buf = null;
-	// headerBuf.clear();
-	// ready = false;
-	// } else {
-	// byte bytes[] = new byte[in.remaining()];
-	// in.get(bytes);
-	// buf.put(bytes);
-	// }
-	// }
 
 	private CmppMessageHeader decode(ByteBuffer buf) {
 		int totalLength = buf.getInt();
@@ -158,8 +97,8 @@ public class CmppCumulativeDecoder extends CumulativeProtocolDecoder {
 			int commandId = in.getInt();
 			if (totalLength < Constants.MESSAGE_HEADER_LEN
 					|| (!isRightCommandId(commandId))) {
-				session.close(true);
 				in.rewind();
+				session.close(true);
 				throw new Exception("包头错误：" + Hex.encodeHexString(in.array())
 						+ " isRightCommand:" + isRightCommandId(commandId)
 						+ " totalLength:" + totalLength);

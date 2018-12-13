@@ -8,6 +8,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 
+@Deprecated
 public class CmppDecoder implements ProtocolDecoder {
 	ByteBuffer buf;
 	ByteBuffer headerBuf = ByteBuffer.allocate(8);

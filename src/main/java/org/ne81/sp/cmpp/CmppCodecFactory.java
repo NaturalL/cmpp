@@ -11,12 +11,12 @@ public class CmppCodecFactory implements ProtocolCodecFactory {
 
 	public CmppCodecFactory(byte version) {
 		encoder = new CmppEncoder();
-		decoder = new CmppDecoder(version);
+		decoder = new CmppCumulativeDecoder(version);
 	}
 
 	public CmppCodecFactory() {
 		encoder = new CmppEncoder();
-		decoder = new CmppDecoder();
+		decoder = new CmppCumulativeDecoder();
 	}
 
 	public ProtocolEncoder getEncoder(IoSession ioSession) throws Exception {
