@@ -178,7 +178,7 @@ public class CmppCumulativeDecoder extends CumulativeProtocolDecoder {
 				buf.clear();
 				buf = null;
 				session.close(true);
-				throw new Exception("数据包错误：" + Hex.encodeHexString(in.array());
+				throw new Exception("数据包错误：" + Hex.encodeHexString(in.array()));
 			}
 			out.write(message);
 			return true;
