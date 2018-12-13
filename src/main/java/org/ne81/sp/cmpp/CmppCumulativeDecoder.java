@@ -157,9 +157,9 @@ public class CmppCumulativeDecoder extends CumulativeProtocolDecoder {
 			int commandId = in.getInt();
 			if (totalLength > 3511 || totalLength < Constants.MESSAGE_HEADER_LEN
 					|| (!isRightCommandId(commandId))) {
-				String hexdump = String.format("%040x", new BigInteger(in.array()));
-				session.close(true);
-				throw new Exception("包头错误：" + hexdump);
+//				String hexdump = String.format("%040x", new BigInteger(in.array()));
+//				session.close(true);
+				throw new Exception("cannot decode");
 			}
 			if (in.remaining() + 8 < totalLength) {
 				in.rewind();
