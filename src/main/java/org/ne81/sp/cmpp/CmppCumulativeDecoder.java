@@ -159,7 +159,10 @@ public class CmppCumulativeDecoder extends CumulativeProtocolDecoder {
 			if (totalLength < Constants.MESSAGE_HEADER_LEN
 					|| (!isRightCommandId(commandId))) {
 				session.close(true);
-				throw new Exception("包头错误：" + Hex.encodeHexString(in.array()));
+				in.rewind();
+				throw new Exception("包头错误：" + Hex.encodeHexString(in.array())
+						+ " isRightCommand:" + isRightCommandId(commandId)
+						+ " totalLength:" + totalLength);
 			}
 			if (in.remaining() + 8 < totalLength) {
 				in.rewind();
