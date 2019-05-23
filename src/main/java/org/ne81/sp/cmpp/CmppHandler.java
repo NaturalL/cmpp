@@ -150,7 +150,7 @@ public class CmppHandler implements IoHandler {
 						//上行回复
 						CmppDeliver upSms = new CmppDeliver(version, reportId, submit.srcId,
 								"", mobile,
-								CmppUtil.getMessageContentBytes("收到了", (byte) 15), "linkId");
+								CmppUtil.getMessageContentBytes("收到了,退订", (byte) 15), "linkId");
 						upSms.setRegisteredDelivery((byte) 0);
 
 						session.write(upSms.clone());
