@@ -136,7 +136,7 @@ public class CmppHandler implements IoHandler {
 									CmppUtil.getMessageContentBytes("状态报告", (byte) 15), "linkId");
 							deliver.setRegisteredDelivery((byte) 1);
 							deliver.setReport(new CmppReport(reportId,
-									finalSuccessReport ? "DELIVRD" : "UNDELIVRD", "", "",
+									finalSuccessReport ? "DELIVRD" : "UNDELIV_0001", "", "",
 									mobile, i));
 							session.write(deliver);
 						}
